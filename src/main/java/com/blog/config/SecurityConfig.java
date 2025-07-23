@@ -18,6 +18,7 @@ import com.blog.security.CustomUserDetailService;
 import com.blog.security.JwtAuthenticationEntryPoint;
 import com.blog.security.JwtAuthenticationFilter;
 
+//we need to work on it
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig  {
