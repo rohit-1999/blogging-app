@@ -5,11 +5,15 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.blog.entities.Role;
 import com.blog.entities.User;
 import com.blog.exceptions.ResourceNotFoundException;
 import com.blog.payloads.UserDto;
+import com.blog.repositories.RoleRepo;
 import com.blog.repositories.UserRepo;
 import com.blog.services.UserService;
 
@@ -21,12 +25,27 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	 @Autowired
+	    PasswordEncoder passwordEncoder;
+	 
+	 @Autowired
+	 RoleRepo roleRepo;
+
 
 	@Override
 	public UserDto createUser(UserDto userDto) {
 		
 		User user = this.dtoToUser(userDto);
-		
+		 // Hash the password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        //  AUTO-ASSIGN ROLE_USER
+        Role userRole = roleRepo.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
+
+        user.getRoles().add(userRole);
+        
 		User savedUser = this.userRepo.save(user);
 		
 		return this.userTodto(savedUser);
@@ -88,6 +107,13 @@ public class UserServiceImpl implements UserService {
 //		userDto.setPassword(user.getPassword());
 		return userDto;
 		
+	}
+	
+	@Override
+	public User getUserByEmail(String email) {
+	    return userRepo.findByEmail(email)
+	        .orElseThrow(() ->
+	            new UsernameNotFoundException("User not found with email: " + email));
 	}
 	
 }

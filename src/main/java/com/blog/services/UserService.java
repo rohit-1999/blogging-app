@@ -2,6 +2,7 @@ package com.blog.services;
 
 import java.util.List;
 
+import com.blog.entities.User;
 import com.blog.payloads.UserDto;
 
 public interface UserService {
@@ -12,4 +13,5 @@ public interface UserService {
 	List<UserDto> getAllUsers();
 	
 	void deleteUser(Integer userId);
+	User getUserByEmail(String email);
 }

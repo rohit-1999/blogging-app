@@ -61,12 +61,15 @@ public class User implements UserDetails {
 	@OneToMany( mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Post> posts = new ArrayList<>();
 	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = "user_role",
-	joinColumns = @JoinColumn(name ="user", referencedColumnName = "id"),
-	inverseJoinColumns = @JoinColumn(name="role", referencedColumnName = "id")
-			)
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(
+	    name = "user_role",
+	    joinColumns = @JoinColumn(name = "user_id"),
+	    inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
 	private Set<Role> roles = new HashSet<>();
+
+
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
